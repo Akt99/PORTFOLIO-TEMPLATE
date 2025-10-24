@@ -1,13 +1,42 @@
 <!doctype html>
 <html lang="en" class="scroll-smooth">
   <head>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="preload" as="image" href="/tech/supabase.svg" imagesrcset="/tech/supabase.svg" fetchpriority="high">
+<link rel="preload" as="image" href="/tech/selenium.svg" imagesrcset="/tech/selenium.svg" fetchpriority="high">
+
 
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <meta name="color-scheme" content="light dark" />
+
+    <!-- Prevent dark/light FOUC: run before any render -->
+    <script>
+      (function () {
+        try {
+          const saved = localStorage.getItem("theme"); // "dark" | "light" | null
+          const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          const useDark = saved ? saved === "dark" : prefersDark;
+          document.documentElement.classList.toggle("dark", !!useDark);
+        } catch (_) {
+          /* no-op */
+        }
+      })();
+    </script>
+
+    <!-- Font performance tweaks -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
     <title>Aktportfolio</title>
   </head>
-  <body>
+  <body class="bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100 antialiased">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
