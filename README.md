@@ -1,7 +1,7 @@
 #  PORTFOLIO-TEMPLATE: Portfolia website template
 
 
-<!This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.<br>
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.<br>
 Website is under development and is intended for future use but still can be used as a template
 
 Currently, two official plugins are available:
