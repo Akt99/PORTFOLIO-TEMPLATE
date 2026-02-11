@@ -4,6 +4,7 @@ import {
   motion,
   useReducedMotion,
   useScroll,
+  useSpring,
   useTransform,
 } from "framer-motion";
 import TechIcons from "./tech-icons.jsx";
@@ -32,27 +33,57 @@ export default function About() {
   };
 
   const child = {
-    hidden: { opacity: 0, y: reduce ? 0 : 14 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
+    hidden: { opacity: 0, y: reduce ? 0 : 14, filter: reduce ? "none" : "blur(3px)" },
+    show: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+    },
   };
 
   // Alternating item motion (L/R)
   const itemVariant = (i) => ({
-    hidden: { opacity: 0, x: reduce ? 0 : (i % 2 === 0 ? -18 : 18) },
-    show: { opacity: 1, x: 0, transition: { duration: 1, ease: [0.16, 1, 0.3, 1] } },
+    hidden: {
+      opacity: 0,
+      y: reduce ? 0 : 14,
+      x: reduce ? 0 : i % 2 === 0 ? -22 : 22,
+      scale: reduce ? 1 : 0.985,
+      filter: reduce ? "none" : "blur(3px)",
+    },
+    show: {
+      opacity: 1,
+      y: 0,
+      x: 0,
+      scale: 1,
+      filter: "blur(0px)",
+      transition: { duration: 0.78, ease: [0.16, 1, 0.3, 1] },
+    },
   });
 
   // Timeline dot pulse on enter
   const dotVariant = {
     hidden: { scale: 0.8, opacity: 0.6 },
-    show: { scale: [0.8, 1.15, 1], opacity: 1, transition: { duration: 2, ease: [0.16, 1, 0.3, 1] } },
+    show: {
+      scale: [0.8, 1.2, 1],
+      opacity: 1,
+      transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] },
+    },
   };
 
   // Scroll-linked progress bars
+  const { scrollYProgress: aboutProg } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
   const { scrollYProgress: expProg } = useScroll({ target: expRef, offset: ["start 80%", "end 10%"] });
   const { scrollYProgress: eduProg } = useScroll({ target: eduRef, offset: ["start 80%", "end 10%"] });
-  const expScale = useTransform(expProg, [0, 1], [0, 1]);
-  const eduScale = useTransform(eduProg, [0, 1], [0, 1]);
+  const expScaleRaw = useTransform(expProg, [0, 1], [0, 1]);
+  const eduScaleRaw = useTransform(eduProg, [0, 1], [0, 1]);
+  const expScale = useSpring(expScaleRaw, { stiffness: 120, damping: 22, mass: 0.35 });
+  const eduScale = useSpring(eduScaleRaw, { stiffness: 120, damping: 22, mass: 0.35 });
+  const introY = useTransform(aboutProg, [0, 1], [reduce ? 0 : 18, reduce ? 0 : -18]);
+  const introOpacity = useTransform(aboutProg, [0, 0.18, 0.84, 1], [0.75, 1, 1, 0.9]);
 
   // ---------------- DATA ----------------
   const experience = [
@@ -185,7 +216,8 @@ export default function About() {
     <motion.li
       layout
       variants={itemVariant(index)}
-      whileHover={{ y: -2 }}
+      whileHover={reduce ? undefined : { y: -4, scale: 1.01 }}
+      transition={{ type: "spring", stiffness: 220, damping: 20 }}
       className="relative z-0 pl-10 py-3 rounded-lg transform-gpu hover:bg-gray-50/5 dark:hover:bg-white/5 hover:shadow-sm hover:z-10"
     >
       <motion.span
@@ -200,8 +232,16 @@ export default function About() {
             <span className="text-sm text-gray-500 dark:text-gray-400">• {item.role}</span>
           </div>
           <div className="text-xs text-gray-500 dark:text-gray-400">{item.dates}</div>
-          <ul className="mt-2 list-disc space-y-1 pl-5 text-gray-700 dark:text-gray-300">
-            {item.points.map((p, idx) => <li key={idx}>{p}</li>)}
+          <ul className="mt-2 space-y-1.5 text-gray-700 dark:text-gray-300">
+            {item.points.map((p, idx) => (
+              <li key={idx} className="flex items-start gap-2 leading-6">
+                <span
+                  aria-hidden="true"
+                  className="mt-2.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-gray-500 dark:bg-gray-400"
+                />
+                <span>{p}</span>
+              </li>
+            ))}
           </ul>
           <div className="mt-3">
             <CertLinks certs={item.certificates} />
@@ -215,7 +255,8 @@ export default function About() {
     <motion.li
       layout
       variants={itemVariant(index)}
-      whileHover={{ y: -2 }}
+      whileHover={reduce ? undefined : { y: -4, scale: 1.01 }}
+      transition={{ type: "spring", stiffness: 220, damping: 20 }}
       className="relative z-0 pl-10 py-3 rounded-lg transform-gpu hover:bg-gray-50/5 dark:hover:bg-white/5 hover:shadow-sm hover:z-10"
     >
       <motion.span
@@ -243,27 +284,56 @@ export default function About() {
     <section id="about" className="mx-auto max-w-5xl px-4 py-16">
       <h2 className="text-3xl font-bold tracking-tight">About</h2>
 
-      <div className="mt-4 grid gap-6 md:grid-cols-3">
-        <p className="md:col-span-2 text-gray-700 dark:text-gray-300">
-          I’m a seasoned digital soldier with hands-on experience across both legacy
-          enterprise systems and the latest emerging technologies. Having started my
-          journey at Larsen & Toubro, I’ve built a strong foundation in enterprise
-          applications, automation and scalable digital solutions. I’m a developer
-          focused on building accessible, performant interfaces. I enjoy clean design
-          systems, component architecture, and shipping value fast. <br></br><br></br>Swipe down ⬇️⬇️ to know more...
+      <motion.div className="mt-4 grid gap-6 md:grid-cols-3" style={{ y: introY, opacity: introOpacity }}>
+        <div className="md:col-span-2">
+          <p className="text-gray-700 dark:text-gray-300">
+            I’m an AI-Literate seasoned digital soldier with hands-on experience across both legacy
+            enterprise systems and the latest emerging technologies. Strong in core CS fundamentals, APIs, automation, and scalable architecture. Currently sharpening system design while shipping AI-driven enterprise-grade projects. Ready to work | Ready to build.
+          </p>
 
-          
-        </p>
-        
+          <motion.div
+            className="mt-4 inline-flex w-fit flex-col gap-2 rounded-xl border border-gray-200/70 bg-white/60 px-3 py-2 backdrop-blur dark:border-gray-700/70 dark:bg-gray-900/50"
+            initial={{ opacity: 0, y: reduce ? 0 : 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.7 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-gray-600 dark:text-gray-300">
+              <span>keep on scrolling down</span>
+              <motion.span
+                animate={reduce ? undefined : { y: [0, 2, 0] }}
+                transition={reduce ? undefined : { duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
+                aria-hidden="true"
+              >
+                ↓
+              </motion.span>
+              <motion.span
+                animate={reduce ? undefined : { y: [0, 2, 0] }}
+                transition={reduce ? undefined : { duration: 0.8, delay: 0.15, repeat: Infinity, ease: "easeInOut" }}
+                aria-hidden="true"
+              >
+                ↓
+              </motion.span>
+            </div>
+            <div className="h-1.5 w-56 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+              <motion.div
+                className="h-full w-24 rounded-full bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500"
+                animate={reduce ? undefined : { x: ["-35%", "145%"] }}
+                transition={reduce ? undefined : { duration: 1.8, repeat: Infinity, ease: "linear" }}
+              />
+            </div>
+            <p className="text-xs text-gray-600 dark:text-gray-300">Swipe down to know more...</p>
+          </motion.div>
+        </div>
 
-        <ul className="space-y-2 text-gray-700 dark:text-gray-300">
-          <li>• React | Next.js | Vite</li>
-          <li>• Tailwind | shadcn/ui</li>
-          <li>• Node | Express</li>
-          <li>• Firebase | Supabase</li>
-          <li>• Flask | Django | Selenium | BeautifulSoup</li>
+        <ul className="list-disc space-y-2 pl-5 text-gray-700 marker:text-gray-500 dark:text-gray-300 dark:marker:text-gray-400">
+          <li>React | Next.js | Vite</li>
+          <li>Tailwind | shadcn/ui</li>
+          <li>Node | Express</li>
+          <li>Firebase | Supabase</li>
+          <li>Flask | Django | Selenium | BeautifulSoup</li>
         </ul>
-      </div>
+      </motion.div>
 
       {/* Animated block — parent starts hidden and reveals when in view */}
       <motion.div
@@ -277,15 +347,23 @@ export default function About() {
         <motion.h3 className="mb-4 text-xl font-semibold" variants={child}>
           TECH STACK :
         </motion.h3>
+        <motion.div
+          variants={child}
+          className="mb-5 h-0.5 w-69 rounded bg-gradient-to-r from-blue-500/70 via-cyan-400/60 to-transparent"
+          animate={reduce ? undefined : { x: [0, 10, 0], opacity: [0.9, 1, 0.9] }}
+          transition={reduce ? undefined : { duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+        />
         <TechIcons listVariants={child} />
 
         {/* EXPERIENCE (rendered in reverse) */}
-        <motion.h3 className="mt-12 mb-2 text-xl font-semibold" variants={child}>
+        <motion.h3 className="mt-12 mb-4 text-xl font-semibold" variants={child}>
           EXPERIENCE :
         </motion.h3>
         <motion.div
           variants={child}
-          className="mb-4 h-0.5 w-16 rounded bg-gradient-to-r from-gray-400 to-transparent dark:from-gray-600"
+          className="mb-5 h-0.5 w-69 rounded bg-gradient-to-r from-blue-500/70 via-cyan-400/60 to-transparent"
+          animate={reduce ? undefined : { x: [0, 10, 0], opacity: [0.9, 1, 0.9] }}
+          transition={reduce ? undefined : { duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
         />
         <div ref={expRef} className="relative">
           <motion.div
@@ -305,7 +383,9 @@ export default function About() {
         </motion.h3>
         <motion.div
           variants={child}
-          className="mb-4 h-0.5 w-16 rounded bg-gradient-to-r from-gray-400 to-transparent dark:from-gray-600"
+          className="mb-5 h-0.5 w-69 rounded bg-gradient-to-r from-blue-500/70 via-cyan-400/60 to-transparent"
+          animate={reduce ? undefined : { x: [0, 10, 0], opacity: [0.9, 1, 0.9] }}
+          transition={reduce ? undefined : { duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
         />
         <div ref={eduRef} className="relative">
           <motion.div

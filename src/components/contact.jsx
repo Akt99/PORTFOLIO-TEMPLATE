@@ -21,7 +21,7 @@ export default function Contact() {
       <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Contact</h2><br></br>
       <p className="mt-1 text-gray-600 dark:text-gray-300">
         The world is a very small place, small enough to travel and large enough<br></br> 
-        to be understood by human mind, isn't it ?
+        to be understood by human brain, isn't it ?
         I know you have a project or <br></br>
         role in mind ;) Let’s talk !
       </p>
