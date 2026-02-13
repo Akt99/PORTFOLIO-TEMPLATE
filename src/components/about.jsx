@@ -15,6 +15,7 @@ export default function About() {
   // Scroll containers for progress bars
   const expRef = useRef(null);
   const eduRef = useRef(null);
+  const certRef = useRef(null);
   const sectionRef = useRef(null);
 
   // Parent controls the section reveal + sets up a stagger for its children
@@ -78,10 +79,13 @@ export default function About() {
   });
   const { scrollYProgress: expProg } = useScroll({ target: expRef, offset: ["start 80%", "end 10%"] });
   const { scrollYProgress: eduProg } = useScroll({ target: eduRef, offset: ["start 80%", "end 10%"] });
+  const { scrollYProgress: certProg } = useScroll({ target: certRef, offset: ["start 80%", "end 10%"] });
   const expScaleRaw = useTransform(expProg, [0, 1], [0, 1]);
   const eduScaleRaw = useTransform(eduProg, [0, 1], [0, 1]);
+  const certScaleRaw = useTransform(certProg, [0, 1], [0, 1]);
   const expScale = useSpring(expScaleRaw, { stiffness: 120, damping: 22, mass: 0.35 });
   const eduScale = useSpring(eduScaleRaw, { stiffness: 120, damping: 22, mass: 0.35 });
+  const certScale = useSpring(certScaleRaw, { stiffness: 120, damping: 22, mass: 0.35 });
   const introY = useTransform(aboutProg, [0, 1], [reduce ? 0 : 18, reduce ? 0 : -18]);
   const introOpacity = useTransform(aboutProg, [0, 0.18, 0.84, 1], [0.75, 1, 1, 0.9]);
 
@@ -170,6 +174,28 @@ export default function About() {
       logo: "/logos/outrlogo.png",
       details: "Active learner; tech enthusiast; acting, dancing, team-building. Secured 9.17 cgpa.",
       certificates: [{ label: "Degree", href: "https://drive.google.com/file/d/1viO3skXXb4l77yf6oJ33VykNziQWTlXl/view?usp=sharing" }],
+    },
+  ];
+
+  const certifications = [
+    {
+      issuer: "Udemy",
+      title: "Python (100 Days of Code)",
+      logo: "/logos/udemy.svg",
+      certificates: [
+        { label: "View Certificate", href: "https://www.udemy.com/certificate/UC-44cf7070-1712-451a-a861-dfc6eb8e9d9e/" },
+      ],
+    },
+    {
+      issuer: "Google Cloud Skills Boost",
+      title: "Generative AI",
+      logo: "/logos/google.svg",
+      certificates: [
+        {
+          label: "View Badge",
+          href: "https://www.skills.google/public_profiles/7e327ec4-e477-4896-976e-8414f0f5e7d8/badges/16366110?utm_medium=social&utm_source=linkedin&utm_campaign=ql-social-share",
+        },
+      ],
     },
   ];
 
@@ -272,6 +298,51 @@ export default function About() {
           </div>
           <div className="text-xs text-gray-500 dark:text-gray-400">{item.dates}</div>
           <p className="mt-2 text-gray-700 dark:text-gray-300">{item.details}</p>
+          <div className="mt-3">
+            <CertLinks certs={item.certificates} />
+          </div>
+        </div>
+      </div>
+    </motion.li>
+  );
+
+  const CertificationItem = ({ item, index }) => (
+    <motion.li
+      layout
+      variants={itemVariant(index)}
+      whileHover={reduce ? undefined : { y: -4, scale: 1.01 }}
+      transition={{ type: "spring", stiffness: 220, damping: 20 }}
+      className="relative z-0 pl-10 py-3 rounded-lg transform-gpu hover:bg-gray-50/5 dark:hover:bg-white/5 hover:shadow-sm hover:z-10"
+    >
+      <motion.span
+        variants={dotVariant}
+        className="absolute left-0 top-1.5 inline-block h-2.5 w-2.5 rounded-full bg-gray-400 dark:bg-gray-600"
+      />
+      <div className="flex items-start gap-3">
+        {item.issuer?.toLowerCase().includes("udemy") ? (
+          <span className="mt-0.5 inline-flex h-8 w-8 items-center justify-center rounded bg-[#a435f0]" aria-hidden="true">
+            <svg viewBox="0 0 64 64" width="20" height="20" fill="none">
+              <path d="M17 20c0 11 6.4 20 15 20s15-9 15-20" stroke="#fff" strokeWidth="6" strokeLinecap="round" />
+              <circle cx="32" cy="42.5" r="3.5" fill="#fff" />
+            </svg>
+          </span>
+        ) : item.issuer?.toLowerCase().includes("google") ? (
+          <span className="mt-0.5 inline-flex h-8 w-8 items-center justify-center rounded bg-white ring-1 ring-gray-200 dark:ring-gray-700" aria-hidden="true">
+            <svg viewBox="0 0 64 64" width="20" height="20">
+              <path d="M52 32.7c0-1.5-.1-2.6-.4-3.8H32v7.3h11.5c-.2 1.9-1.6 4.8-4.8 6.8l-.1.5 7 5.4.5.1c4.4-4.1 6.9-10 6.9-16.3z" fill="#4285F4" />
+              <path d="M32 53c5.6 0 10.3-1.8 13.7-5l-7.4-5.7c-2 1.4-4.6 2.4-8.2 2.4-5.5 0-10.1-3.6-11.8-8.6l-.5.1-7.3 5.6-.2.5C13.8 48.8 22.3 53 32 53z" fill="#34A853" />
+              <path d="M20.2 36.1c-.4-1.1-.6-2.3-.6-3.6 0-1.3.2-2.5.6-3.6l0-.5-7.5-5.7-.2.1A21 21 0 0 0 10 32.5c0 3.4.8 6.6 2.4 9.4l7.8-5.8z" fill="#FBBC05" />
+              <path d="M32 20.3c4.5 0 7.5 1.9 9.3 3.5l6.8-6.6C44.2 13.6 37.6 11 32 11c-9.7 0-18.2 5.3-21.8 13.2l7.7 6c1.7-5 6.4-8.9 12.1-8.9z" fill="#EA4335" />
+            </svg>
+          </span>
+        ) : (
+          <LogoImg src={item.logo} alt={`${item.issuer} logo`} />
+        )}
+        <div className="flex-1">
+          <div className="flex flex-wrap items-baseline gap-x-2">
+            <h4 className="font-semibold">{item.title}</h4>
+            <span className="text-sm text-gray-500 dark:text-gray-400">• {item.issuer}</span>
+          </div>
           <div className="mt-3">
             <CertLinks certs={item.certificates} />
           </div>
@@ -395,6 +466,28 @@ export default function About() {
           <motion.ol layout variants={child} className="relative border-l pl-6 dark:border-gray-800">
             {[...education].reverse().map((ed, i) => (
               <EducationItem key={`${ed.school}-${ed.dates}`} item={ed} index={i} />
+            ))}
+          </motion.ol>
+        </div>
+
+        {/* CERTIFICATIONS */}
+        <motion.h3 className="mt-12 mb-2 text-xl font-semibold" variants={child}>
+          CERTIFICATIONS :
+        </motion.h3>
+        <motion.div
+          variants={child}
+          className="mb-5 h-0.5 w-69 rounded bg-gradient-to-r from-blue-500/70 via-cyan-400/60 to-transparent"
+          animate={reduce ? undefined : { x: [0, 10, 0], opacity: [0.9, 1, 0.9] }}
+          transition={reduce ? undefined : { duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <div ref={certRef} className="relative">
+          <motion.div
+            style={{ scaleY: certScale }}
+            className="absolute left-0 top-0 h-full w-px origin-top bg-gray-300 dark:bg-gray-800"
+          />
+          <motion.ol layout variants={child} className="relative border-l pl-6 dark:border-gray-800">
+            {certifications.map((cert, i) => (
+              <CertificationItem key={`${cert.issuer}-${cert.title}`} item={cert} index={i} />
             ))}
           </motion.ol>
         </div>

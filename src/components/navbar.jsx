@@ -12,6 +12,7 @@ const links = [
   { href: "/projects", label: "Projects" },
   { href: "/contact",  label: "Contact" },
 ];
+const RESUME_PATH = "/resume/arnab-kumar-tripathy-resume.pdf";
 
 export function Navbar() {  // NAMED export
   const [open, setOpen] = useState(false);
@@ -73,6 +74,17 @@ export function Navbar() {  // NAMED export
               Hire me
             </NavLink>
           </li>
+          <li>
+            <a
+              href={RESUME_PATH}
+              download
+              className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-100 dark:hover:bg-gray-800"
+              aria-label="Download resume"
+              title="Download resume"
+            >
+              Resume
+            </a>
+          </li>
           <li className="pl-2">
             <ThemeToggle />
           </li>
@@ -131,6 +143,16 @@ export function Navbar() {  // NAMED export
                 >
                   Hire me
                 </NavLink>
+              </li>
+              <li>
+                <a
+                  href={RESUME_PATH}
+                  download
+                  onClick={() => setOpen(false)}
+                  className="mt-1 inline-block rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-100 dark:hover:bg-gray-800"
+                >
+                  Resume
+                </a>
               </li>
             </ul>
           </motion.div>

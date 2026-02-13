@@ -26,7 +26,7 @@ export const projects = [
     ],
     tech: ["React", "Flask", "Three.js", "SQLAlchemy"],
     github: "https://github.com/Akt99/BlogWebsiteDep2",
-    demo: "https://drive.google.com/drive/folders/1FZucaBwg27Fg8O9yKgAHsB60bEkzSTtp?usp=drive_link",
+    demo: "https://drive.google.com/file/d/1fcRjxqnySwScLPwONfN5az1RoYM8n80o/view?usp=drive_link",
   },
   {
     title: "Akt Mart (E-Commerce Platform)",
